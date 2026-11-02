@@ -1,0 +1,6 @@
+{
+  "name": "GI-CommandCraft",
+  "description": "GI-CommandCraft: Dual-panel file manager with terminal, ZIP handling, image viewer, plugins and custom configuration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
