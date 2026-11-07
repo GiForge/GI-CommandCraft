@@ -35,9 +35,12 @@ import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Lan
+import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material.icons.filled.Visibility
@@ -445,6 +448,7 @@ fun DriveSelectorDialog(
     fileManager: FileManager,
     onSelectDrive: (path: String) -> Unit,
     onOpenPlugins: () -> Unit,
+    onOpenLan: () -> Unit,
     onRequestPermission: () -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -526,6 +530,16 @@ fun DriveSelectorDialog(
                         }
                     )
                 }
+
+                DriveItemRow(
+                    icon = Icons.Default.Lan,
+                    title = "\\\\ LAN - Rete Windows / Samba (SMB)",
+                    subtitle = "PC condivisi, NAS, server locali e scanner WiFi",
+                    onClick = {
+                        onOpenLan()
+                        onDismiss()
+                    }
+                )
 
                 DriveItemRow(
                     icon = Icons.Default.Extension,
@@ -638,6 +652,8 @@ fun ContextMenuDialog(
     isSelected: Boolean,
     onDismiss: () -> Unit,
     onAction: () -> Unit,
+    onShare: () -> Unit,
+    onOpenWith: () -> Unit,
     onRename: () -> Unit,
     onView: () -> Unit,
     onEdit: () -> Unit,
@@ -693,6 +709,28 @@ fun ContextMenuDialog(
                         onAction()
                     }
                 )
+
+                if (!item.isDirectory) {
+                    ContextMenuItem(
+                        icon = Icons.Default.OpenInNew,
+                        key = "OPEN",
+                        label = "Apri con... (App esterna es. Word, PDF)",
+                        onClick = {
+                            onDismiss()
+                            onOpenWith()
+                        }
+                    )
+
+                    ContextMenuItem(
+                        icon = Icons.Default.Share,
+                        key = "SHARE",
+                        label = "Condividi (Bluetooth / Altre App)",
+                        onClick = {
+                            onDismiss()
+                            onShare()
+                        }
+                    )
+                }
 
                 ContextMenuItem(
                     icon = Icons.Default.Edit,

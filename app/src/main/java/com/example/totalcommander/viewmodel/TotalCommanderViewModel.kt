@@ -11,10 +11,12 @@ import com.example.totalcommander.model.PanelState
 import com.example.totalcommander.model.PluginType
 import com.example.totalcommander.model.SortMode
 import com.example.totalcommander.model.TcConfiguration
+import com.example.totalcommander.network.LanNetworkManager
 import com.example.totalcommander.plugins.PluginManager
 import com.example.totalcommander.terminal.TerminalLine
 import com.example.totalcommander.terminal.TerminalLineType
 import com.example.totalcommander.terminal.TerminalManager
+import com.example.totalcommander.util.FileShareHelper
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -28,6 +30,7 @@ class TotalCommanderViewModel(application: Application) : AndroidViewModel(appli
 
     val fileManager = FileManager(application)
     val pluginManager = PluginManager(application)
+    val lanManager = LanNetworkManager(application)
     val terminalManager = TerminalManager(fileManager)
 
     // Configuration
@@ -126,6 +129,7 @@ class TotalCommanderViewModel(application: Application) : AndroidViewModel(appli
     val activeRenameDialog = MutableStateFlow<FileItem?>(null)
     val activeContextMenu = MutableStateFlow<Pair<PanelId, FileItem>?>(null)
     val activeDetailsDialog = MutableStateFlow<FileItem?>(null)
+    val activeLanDialog = MutableStateFlow(false)
 
     // Snackbar notifications
     private val _snackbarMessage = MutableSharedFlow<String>()
@@ -298,6 +302,67 @@ class TotalCommanderViewModel(application: Application) : AndroidViewModel(appli
 
     fun goToPhoneStorage(panelId: PanelId) {
         navigateToDirectory(panelId, fileManager.internalStorageDir.absolutePath)
+    }
+
+    fun shareItem(context: android.content.Context, item: FileItem) {
+        if (item.isDirectory) {
+            notify("Seleziona uno o più file per la condivisione")
+            return
+        }
+        FileShareHelper.shareSingle(context, File(item.path)) { err ->
+            notify(err)
+        }
+    }
+
+    fun shareSelected(context: android.content.Context, panelId: PanelId) {
+        val panel = getPanelState(panelId)
+        val selectedFiles = panel.items
+            .filter { it.path in panel.selectedPaths && !it.isDirectory && !it.isParentDir }
+            .map { File(it.path) }
+
+        if (selectedFiles.isNotEmpty()) {
+            FileShareHelper.shareMultiple(context, selectedFiles) { err ->
+                notify(err)
+            }
+        } else {
+            val firstFile = panel.items.firstOrNull { !it.isDirectory && !it.isParentDir }
+            if (firstFile != null) {
+                FileShareHelper.shareSingle(context, File(firstFile.path)) { err ->
+                    notify(err)
+                }
+            } else {
+                notify("Nessun file selezionato per la condivisione")
+            }
+        }
+    }
+
+    fun openWithItem(context: android.content.Context, item: FileItem) {
+        if (item.isDirectory) {
+            notify("Seleziona un file da aprire con un'app esterna")
+            return
+        }
+        FileShareHelper.openWith(context, File(item.path)) { err ->
+            notify(err)
+        }
+    }
+
+    fun openWithSelected(context: android.content.Context, panelId: PanelId) {
+        val panel = getPanelState(panelId)
+        val target = panel.items.firstOrNull { it.path in panel.selectedPaths && !it.isDirectory && !it.isParentDir }
+            ?: panel.items.firstOrNull { !it.isDirectory && !it.isParentDir }
+
+        if (target != null) {
+            openWithItem(context, target)
+        } else {
+            notify("Nessun file selezionato da aprire")
+        }
+    }
+
+    fun openLanShare(panelId: PanelId, localPath: String) {
+        val target = File(localPath)
+        if (!target.exists()) target.mkdirs()
+        navigateToDirectory(panelId, target.absolutePath)
+        notify("Aperta condivisione di rete: ${target.name}")
     }
 
     private fun enterZipMode(panelId: PanelId, zipFile: File) {

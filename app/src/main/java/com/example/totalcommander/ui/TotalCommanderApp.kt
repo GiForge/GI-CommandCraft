@@ -47,6 +47,7 @@ import com.example.totalcommander.ui.dialogs.ContextMenuDialog
 import com.example.totalcommander.ui.dialogs.FilePropertiesDialog
 import com.example.totalcommander.ui.dialogs.ImageViewerDialog
 import com.example.totalcommander.ui.dialogs.IniConfigDialog
+import com.example.totalcommander.ui.dialogs.LanNetworkDialog
 import com.example.totalcommander.ui.dialogs.MoveConfirmDialog
 import com.example.totalcommander.ui.dialogs.NewFileDialog
 import com.example.totalcommander.ui.dialogs.NewFolderDialog
@@ -103,6 +104,7 @@ fun TotalCommanderApp(viewModel: TotalCommanderViewModel) {
     val activeRename by viewModel.activeRenameDialog.collectAsState()
     val activeContextMenu by viewModel.activeContextMenu.collectAsState()
     val activeDetails by viewModel.activeDetailsDialog.collectAsState()
+    val activeLan by viewModel.activeLanDialog.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -186,6 +188,15 @@ fun TotalCommanderApp(viewModel: TotalCommanderViewModel) {
                 },
                 onF10Search = {
                     viewModel.activeSearchDialog.value = true
+                },
+                onShare = {
+                    viewModel.shareSelected(context, activePanelId)
+                },
+                onOpenWith = {
+                    viewModel.openWithSelected(context, activePanelId)
+                },
+                onLan = {
+                    viewModel.activeLanDialog.value = true
                 },
                 onZipCompress = {
                     viewModel.activeZipCompressDialog.value = true
@@ -343,6 +354,7 @@ fun TotalCommanderApp(viewModel: TotalCommanderViewModel) {
     if (activePlugins) {
         PluginManagerDialog(
             pluginManager = viewModel.pluginManager,
+            onOpenLan = { viewModel.activeLanDialog.value = true },
             onDismiss = { viewModel.activePluginDialog.value = false }
         )
     }
@@ -439,6 +451,9 @@ fun TotalCommanderApp(viewModel: TotalCommanderViewModel) {
             onOpenPlugins = {
                 viewModel.activePluginDialog.value = true
             },
+            onOpenLan = {
+                viewModel.activeLanDialog.value = true
+            },
             onRequestPermission = {
                 viewModel.requestStoragePermission(context)
             },
@@ -465,6 +480,8 @@ fun TotalCommanderApp(viewModel: TotalCommanderViewModel) {
             isSelected = isSelected,
             onDismiss = { viewModel.activeContextMenu.value = null },
             onAction = { viewModel.onItemAction(panelId, item) },
+            onShare = { viewModel.shareItem(context, item) },
+            onOpenWith = { viewModel.openWithItem(context, item) },
             onRename = { viewModel.activeRenameDialog.value = item },
             onView = {
                 if (item.isImage) {
@@ -524,6 +541,16 @@ fun TotalCommanderApp(viewModel: TotalCommanderViewModel) {
         FilePropertiesDialog(
             item = item,
             onDismiss = { viewModel.activeDetailsDialog.value = null }
+        )
+    }
+
+    if (activeLan) {
+        LanNetworkDialog(
+            lanManager = viewModel.lanManager,
+            onExploreShare = { mountPath ->
+                viewModel.openLanShare(activePanelId, mountPath)
+            },
+            onDismiss = { viewModel.activeLanDialog.value = false }
         )
     }
 }

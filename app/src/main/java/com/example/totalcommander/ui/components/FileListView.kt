@@ -145,6 +145,34 @@ fun FileListView(
                             thickness = 0.5.dp
                         )
                     }
+
+                    if (items.isNotEmpty() && items.none { !it.isParentDir }) {
+                        item(key = "empty_folder_banner") {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 32.dp, horizontal = 16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.FolderOpen,
+                                        contentDescription = "Cartella vuota",
+                                        modifier = Modifier.size(36.dp),
+                                        tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+                                    )
+                                    Text(
+                                        text = "Cartella vuota",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

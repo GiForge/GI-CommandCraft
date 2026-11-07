@@ -526,9 +526,9 @@ Welcome to the power user's ultimate dual-panel file manager!
             )
         }.toMutableList()
 
-        // If at root or restricted system folder where files cannot be listed or is empty,
-        // inject the virtual root shortcuts so device storage is always accessible!
-        if (isSystemRoot || items.isEmpty()) {
+        // If at root or restricted system folder (e.g. "/" or "/storage") where device root shortcuts are needed,
+        // inject the virtual root shortcuts so device storage is always accessible from system root.
+        if (isSystemRoot) {
             val rootShortcuts = getVirtualRootItems()
             rootShortcuts.forEach { sc ->
                 if (items.none { it.path == sc.path } && result.none { it.path == sc.path }) {

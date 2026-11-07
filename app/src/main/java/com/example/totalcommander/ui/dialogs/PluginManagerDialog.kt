@@ -67,6 +67,7 @@ import com.example.totalcommander.plugins.PluginManager
 @Composable
 fun PluginManagerDialog(
     pluginManager: PluginManager,
+    onOpenLan: () -> Unit,
     onDismiss: () -> Unit
 ) {
     val plugins by pluginManager.plugins.collectAsState()
@@ -86,12 +87,12 @@ fun PluginManagerDialog(
                         title = {
                             Column {
                                 Text(
-                                    text = "Total Commander Plugins",
+                                    text = "Gestione Plugin & Estensioni",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
-                                    text = "${plugins.count { it.isEnabled }} active of ${plugins.size} installed",
+                                    text = "${plugins.count { it.isEnabled }} attivi su ${plugins.size} installati",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.primary
                                 )
@@ -119,7 +120,7 @@ fun PluginManagerDialog(
                         item {
                             Surface(
                                 color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-                                shape = RoundedCornerShape(8.dp),
+                                shape = RoundedCornerShape(10.dp),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Row(
@@ -133,11 +134,21 @@ fun PluginManagerDialog(
                                         modifier = Modifier.size(28.dp)
                                     )
                                     Spacer(modifier = Modifier.width(12.dp))
-                                    Text(
-                                        text = "External plugins extend Total Commander with virtual drives (FTP, WebDAV, LAN) and packing utilities.",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                                    )
+                                    Column {
+                                        Text(
+                                            text = "Come funzionano le estensioni di rete (LAN/SMB, FTP, Cloud):",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 12.sp,
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                                        )
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Text(
+                                            text = "I plugin creano dischi e cartelle virtuali nei pannelli. Per esplorare server Windows, NAS o condivisioni Samba, tocca 'Configura & Connetti' sul plugin LAN qui sotto oppure seleziona '\\\\ LAN' dal pulsante Dischi/Storage in alto.",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            fontSize = 11.sp,
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.9f)
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -145,6 +156,12 @@ fun PluginManagerDialog(
                         items(plugins) { plugin ->
                             PluginCard(
                                 plugin = plugin,
+                                onOpenLan = if (plugin.id == "plugin_lan") {
+                                    {
+                                        onOpenLan()
+                                        onDismiss()
+                                    }
+                                } else null,
                                 onToggle = { enabled ->
                                     pluginManager.togglePlugin(plugin.id, enabled)
                                 },
@@ -183,6 +200,7 @@ fun PluginManagerDialog(
 @Composable
 fun PluginCard(
     plugin: TcPlugin,
+    onOpenLan: (() -> Unit)? = null,
     onToggle: (Boolean) -> Unit,
     onRemove: (() -> Unit)? = null
 ) {
@@ -280,6 +298,20 @@ fun PluginCard(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                     }
+                }
+            }
+
+            if (onOpenLan != null && plugin.isEnabled) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Button(
+                    onClick = onOpenLan,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("open_lan_config_btn")
+                ) {
+                    Icon(Icons.Default.Lan, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Configura & Connetti Rete LAN (SMB)", fontWeight = FontWeight.Bold, fontSize = 12.sp)
                 }
             }
 

@@ -24,8 +24,11 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Extension
 import androidx.compose.material.icons.filled.FileCopy
 import androidx.compose.material.icons.filled.Fingerprint
+import androidx.compose.material.icons.filled.Lan
+import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.Divider
@@ -56,6 +59,9 @@ fun BottomFKeysBar(
     onF8Delete: () -> Unit,
     onF9Terminal: () -> Unit,
     onF10Search: () -> Unit,
+    onShare: () -> Unit,
+    onOpenWith: () -> Unit,
+    onLan: () -> Unit,
     onZipCompress: () -> Unit,
     onChecksum: () -> Unit,
     onPlugins: () -> Unit,
@@ -156,6 +162,30 @@ fun BottomFKeysBar(
                     icon = Icons.Default.Search,
                     testTag = "f10_search_btn",
                     onClick = onF10Search
+                )
+
+                FKeyButton(
+                    key = "SHARE",
+                    label = "Share",
+                    icon = Icons.Default.Share,
+                    testTag = "share_btn",
+                    onClick = onShare
+                )
+
+                FKeyButton(
+                    key = "OPEN",
+                    label = "OpenWith",
+                    icon = Icons.Default.OpenInNew,
+                    testTag = "open_with_btn",
+                    onClick = onOpenWith
+                )
+
+                FKeyButton(
+                    key = "LAN",
+                    label = "Samba",
+                    icon = Icons.Default.Lan,
+                    testTag = "lan_smb_btn",
+                    onClick = onLan
                 )
 
                 // Extra Total Commander Power Actions
