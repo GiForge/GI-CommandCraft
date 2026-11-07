@@ -6,9 +6,13 @@
 [![Material 3](https://img.shields.io/badge/Design-Material%203-757575.svg?style=flat&logo=materialdesign&logoColor=white)](https://m3.material.io/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
+
 **GI-CommandCraft** è un potente e versatile file manager avanzato per smartphone e tablet Android, ispirato alla classica architettura a **doppio pannello** di *Total Commander*. Progettato con le più moderne linee guida di **Jetpack Compose** e **Material 3**, combina la massima efficienza produttiva da desktop con la fluidità e l'ergonomia mobile.
 
 ---
+<div align="center">
+  <img width="328" height="724" alt="image" src="https://github.com/user-attachments/assets/33d14e00-ab71-4b6f-b176-ac536d33d095" />
+</div>
 
 ## 📸 Panoramica Interfaccia
 
@@ -29,7 +33,7 @@
 +-------------------------------------------------------------+
 ```
 
----
+  ---
 
 ## ✨ Funzionalità Principali
 
